@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归档</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <!--引入自定义的css-->
+    <link rel="stylesheet" href="../static/css/me.css">
+
+</head>
+<body>
+
+<!--导航
+    ui 代表使用了ui
+    inverted 反转，白变黑，用了该设置后，标签内部的元素也要设置inverted，否则就是白色底
+    attached 依附，消去圆角，与同级别的segment完美贴合
+    segment 白框
+-->
+<nav th:replace="_fragments :: menu(4)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container"> <!--让元素离边框稍远点-->
+        <!--stackable 可堆叠，适应手机屏-->
+        <div class="ui inverted secondary stackable menu"> <!--menu下的每个条目都要用item，使用secondary使得鼠标悬浮时的背景框变小一点-->
+            <h2 class="ui teal header item">Blog</h2>
+            <a href="#" class="m-item item m-mobile-hide"><i class="home icon"></i>首页</a> <!--i标签 导入semantic中的图标-->
+            <a href="#" class="m-item item m-mobile-hide"><i class="idea icon"></i>分类</a>
+            <a href="#" class="m-item item m-mobile-hide"><i class="tags icon"></i>标签</a>
+            <a href="#" class="active m-item item m-mobile-hide"><i class="clone icon"></i>归档</a>
+            <a href="#" class="m-item item m-mobile-hide"><i class="info icon"></i>关于我</a>
+
+            <!--搜索框-->
+            <div class="right item m-mobile-hide"> <!--条目靠右-->
+                <div class="ui icon input"> <!--icon与下方的搜索符号相配合-->
+                    <input type="text" placeholder="Search">
+                    <i class="search link icon"></i> <!--搜索符号，需要在整个div中加一个icon后才可使搜索符号生效-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--只在手机端显示sidebar-->
+    <a href="#" class="ui black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+
+<!--中间内容-->
+<div class="m-container m-padded-tb-big">
+    <div class="container">
+        <!--header-->
+        <div class="ui top attached segment">
+            <div class="ui middle aligned two column grid">
+                <div class="column">
+                    <h3 class="ui teal header">归档</h3>
+                </div>
+                <div class="right aligned column">
+                    共<h3 class="ui orange header m-text-thin m-inline-block" th:text="${blogCounts}">14</h3>篇博客
+                </div>
+            </div>
+        </div>
+
+        <th:block th:each="item : ${archiveMap}">
+            <h2 class="ui center aligned header" th:text="${item.key}">2017</h2>
+            <div class="ui fluid vertical menu" th:each="blog : ${item.value}">
+                <a th:href="@{/blog/{id}(id=${blog.id})}" target="_blank" class="item">
+                <span>
+                    <i class="mini teal circle icon"></i><span th:text="${blog.title}">关于刻意练习的清单</span>
+                    <div class="ui teal basic left pointing label m-padded-mini" th:text="${#dates.format(blog.updateTime,'MMMdd')}">9月3日</div>
+                </span>
+                    <div class="ui orange basic left pointing label m-padded-mini" th:text="${blog.flag}">原创</div>
+                </a>
+            </div>
+        </th:block>
+    </div>
+</div>
+
+<!--底部footer-->
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive"> <!--vertical 和attached一样，消除圆角边框-->
+    <!--container 和导航栏左右居中保持一致
+        center aligned 文本居中
+    -->
+    <div class="ui center aligned container">
+        <div class="ui inverted divided stackable grid"> <!--将页面分割为16份栅格，divided 分割线-->
+            <div class="three wide column">
+                <div class="ui inverted link list">
+                    <!--rounded image 图片变为圆角
+                        style="width: 110px 设置图片像素，可调用来整图片大小
+                        把图片放入list下，并设为item，可以使图片位置相对其他link list更加对称，居中
+                    -->
+                    <a href="#" class="item">
+                        <img src="../static/images/Trans.png" alt="" class="ui rounded image" style="width: 110px">
+                    </a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">最新博客</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list ">
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">联系我</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list">
+                    <a href="#" class="item">Email: psglgd8051@gmail.com</a>
+                </div>
+            </div>
+            <div class="seven wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">Mark</h4>
+                <p class="m-text-spaced m-text-thin m-opacity-mini">这是我个人的博客，会分享关于编程、写作以及思考相关的内容，希望可以给来这的人有所帮助</p>
+            </div>
+        </div>
+        <!--底部分割线-->
+        <div class="ui inverted section divider"></div>
+        <p class="m-text-spaced m-text-thin m-opacity-mini">Copyright @2020-2021 Designed by Mark</p>
+    </div>
+
+</footer>
+
+<!--/*/<th:block th:replace="_fragments :: script">/*/-->
+<!--引入jquery-->
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<!--/*/</th:block>/*/-->
+
+
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+</script>
+
+</body>
+</html>

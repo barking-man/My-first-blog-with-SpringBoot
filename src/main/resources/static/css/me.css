@@ -1,0 +1,234 @@
+
+body {
+    background: url("");
+}
+
+/*上下左右都设置小一点*/
+.m-padded-lr-responsive {
+    padding-left: 4em !important;
+    padding-right: 4em !important;
+}
+
+.m-padded-mini {
+    padding: 0.2em !important;
+}
+
+.m-padded-tiny {
+    padding: 0.3em !important;
+}
+
+.m-padded {
+    padding: 1em !important;
+}
+
+/*-------------padded 填充设置-------------*/
+.m-padded-tb-mini {
+    padding-top: 0.2em !important; /*1个em代表14个像素*/
+    padding-bottom: 0.2em !important; /*!important 提高自定义的css级别，以覆盖semantic的css*/
+}
+
+.m-padded-tb-tiny {
+    padding-top: 0.3em !important;
+    padding-bottom: 0.3em !important;
+}
+
+.m-padded-tb-small {
+    padding-top: 0.5em !important;
+    padding-bottom: 0.5em !important;
+}
+
+.m-padded-tb {
+    padding-top: 1em !important;
+    padding-bottom: 1em !important;
+}
+
+.m-padded-tb-large {
+    padding-top: 2em !important;
+    padding-bottom: 2em !important;
+}
+
+.m-padded-tb-big {
+    padding-top: 3em !important;
+    padding-bottom: 3em !important;
+}
+
+.m-padded-tb-huge {
+    padding-top: 4em !important;
+    padding-bottom: 4em !important;
+}
+
+/*宽度设置，最大*/
+.m-padded-tb-massive {
+    padding-top: 5em !important;
+    padding-bottom: 5em !important;
+}
+
+/*-------------text-------------*/
+.m-text {
+    font-weight: 300 !important;
+    letter-spacing: 1px !important; /*字符间距 1个像素*/
+    line-height: 1.8 !important; /*行间距 1.8倍*/
+}
+
+.m-text-thin {
+    font-weight: 300 !important;
+}
+
+.m-text-spaced {
+    letter-spacing: 1px !important;
+}
+
+/*行间距 1.8倍*/
+.m-text-lined {
+    line-height: 1.8;
+}
+
+/*透明度*/
+.m-opacity-mini {
+    opacity: 0.8 !important;
+}
+
+/*-------------display-------------*/
+.m-inline-block {
+    display: inline-block !important;
+}
+
+/*-------------margin 外边距-------------*/
+.m-margin-bottom-small {
+    margin-bottom: 0.5em !important;
+}
+
+.m-margin-top-tiny {
+    margin-top: 0.3em !important;
+    margin-bottom: 0.3em !important;
+}
+
+.m-margin-top-small {
+    margin-top: 0.5em !important;
+}
+
+.m-margin-top {
+    margin-top: 1em !important;
+}
+
+.m-margin-top-large {
+    margin-top: 2em !important;
+}
+
+.m-margin-lr-large {
+    margin-left: 50px !important;
+    margin-right: 80px !important;
+}
+
+/*自定义container，宽度样式*/
+.m-container {
+    max-width: 84em !important;
+    margin: auto !important;
+}
+
+.m-container-small {
+    max-width: 72em !important;
+    margin: auto !important;
+}
+
+/*-------------color-------------*/
+.m-black {
+    color: #333 !important;
+}
+
+.m-teal {
+    color: #00B5AD !important;
+}
+
+/*-------------position-------------*/
+.m-mobile-lr-clear {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.m-right-top {
+    /*右上角位置*/
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.m-mobile-show {
+    display: none !important;
+}
+
+.m-fixed {
+    position: fixed !important;
+    z-index: 10 !important;
+}
+
+.m-right-bottom {
+    bottom: 0 !important;
+    right: 0 !important;
+}
+
+/*-------------阴影-------------*/
+.m-shadow-small {
+    -webkit-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/*
+    当使用手机端时，页面宽度小于768像素时，隐藏内容
+*/
+/*当屏幕尺寸小于768像素时触发该断点*/
+@media screen and (max-width: 768px) {
+    .m-mobile-hide {
+        display: none !important;
+    }
+
+    .m-mobile-show {
+        display: block !important;
+    }
+
+    .m-padded-lr-responsive {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .m-mobile-wide {
+        width: 100% !important;
+    }
+}
+
+/*相对位置*/
+.m-rel-div {
+    position: absolute;
+}
+
+.m-rel-pos {
+    width: 90px !important;
+    height: 30px !important;
+    padding-bottom: 0px;
+    position: absolute !important;
+    left: 343px;
+    bottom: 0px;
+    text-align: center !important;
+}
+
+
+/*--------------------debug--------------------*/
+.m-debug {
+    padding-right: 3em !important;
+    padding-left: 3em !important;
+}
+
+.m-div {
+    height: 100px;
+
+    background: #00c4ff;
+    position: absolute;
+}
+
+/*----------------codeopen---------------------*/
+/*-------login动画-------*/
+canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}

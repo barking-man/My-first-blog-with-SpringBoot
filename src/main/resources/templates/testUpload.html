@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/me.css}">
+</head>
+<body>
+
+<!--之前的登录界面-->
+<div class="btn-group mt-2 mb-4" role="group" aria-label="actionButtons">
+    <div class="login-page">
+        <div class="form">
+            <form th:action="@{/regis}" class="register-form" method="post" enctype="multipart/form-data">
+                <img th:src="@{/images/Volcano.jpg}"
+                     width="100" height="100" id="imgs" class="border border-primary"
+                     style="margin-bottom: 13px;
+                     border-radius: 100%"
+                     th:onclick="chooseImageFile('pic')">
+                <input type="file" name="imgFile" id="pic" hidden="hidden" accept="image/*"
+                       th:onchange="showImg('pic')">
+                <div style="position:relative;">
+                    <input type="text" id="nickname" name="nickname" placeholder="昵称"
+                           th:onclick="removeMsg()"
+                           th:onblur="checkNickname()">
+                    <i class="check circle outline icon" id="hook"
+                       style="position:absolute;bottom: 33px;left: 258px;color: #00FF00;display: none"></i>
+                </div>
+
+                <span id="nicknameMsg"></span>
+                <input type="text" name="username" placeholder="用户名"/>
+                <input type="password" name="password" placeholder="密码"/>
+                <input type="password" placeholder="确认密码"/>
+                <input type="text" name="email" placeholder="邮箱">
+                <input type="hidden" name="type" th:value="2">
+
+                <button type="submit">创建</button>
+                <p class="message">已有账号了？ <a href="#">登录</a></p>
+                <div class="ui negative message" id="error" style="display: none">
+                    <i id="closeIcon" class="close icon"></i>
+                    <div id="regMsg1" class="header">创建失败！</div>
+                    <p id="regMsg2">That offer has expired</p>
+                </div>
+            </form>
+            <form class="login-form">
+                <input type="text" placeholder="用户名"/>
+                <input type="password" placeholder="密码"/>
+                <button>登录</button>
+                <p class="message">还没有账号？ <a href="#">立即注册</a></p>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!--之前的登录界面script-->
+<script>
+
+    $('.message a').click(function () {
+        $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+    });
+
+    // 打开file表单,选择图片
+    function chooseImageFile(inputFileId) {
+        $("#" + inputFileId).click();
+    };
+
+    // FileReader接口提供了一个异步的API，通过这个API可以从浏览器中异步访问文件系统中的数据。
+    // 因此，FileReader接口可以读取文件中的数据，并将读取的数据放入到内存中去
+    var imgReader = new FileReader();
+
+    // 正则表达式，过滤图片文件
+    regexImageFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
+
+    function showImg(inputFileId) {
+        // 获取图片
+        var imgFile = $("#" + inputFileId).get(0).files[0];
+        // 判断上传文件是否为图片
+        if (!regexImageFilter.test(imgFile.type)) {
+            console.log("请输入正确图片格式！");
+        } else {
+            imgReader.readAsDataURL(imgFile);
+        }
+    };
+
+    // 读取图片
+    imgReader.onload = function (evt) {
+        $("#imgs").attr("src", evt.target.result);
+    };
+
+    // 表单验证
+    // 昵称格式：限16个字符，支持中英文、数字、减号或下划线
+    var regNickname = "^[\\\u4e00-\\\u9fa5_a-zA-Z0-9-]{1,16}$";
+    // 用户名格式：仅支持字母、数字，并必须以字母开头
+    var username = "^[A-Za-z]{1}[A-Za-z0-9]*$";
+    // 密码格式：数字+字母；字母+特殊字符，特殊字符+数字
+    var pwd = "^(?![\\d]+$)(?![a-zA-Z]+$)(?![^\\da-zA-Z]+$).{6,20}$";
+    function checkNickname() {
+        var nickname = $("#nickname").val();
+        // 昵称合法性验证
+        if (nickname.match(regNickname)) {
+            $("#regMsg1").html("昵称不合法");
+            $("#regMsg2").html("昵称格式：限16个字符，支持中英文、数字、减号或下划线");
+            $("#error").style.display="block";
+            return;
+        }
+
+        $.post({
+            url: "/checkNickname",
+            data: {"nickname": $("#nickname").val()},
+            success: function (data) {
+                if (data.toString() == 'ok') {
+                    document.getElementById("hook").style.display="block";
+                } else {
+                    document.getElementById("error").style.display="block";
+                }
+            }
+        });
+    };
+
+    // 点击输入框时关闭警告消息
+    function removeMsg() {
+        $("#closeIcon").click();
+    };
+
+    // 警告关闭
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        });
+</script>
+</body>
+</html>

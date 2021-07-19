@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <!--引入自定义的css-->
+    <link rel="stylesheet" href="../../static/css/me.css">
+
+</head>
+<body>
+
+<!--导航
+    ui 代表使用了ui
+    inverted 反转，白变黑，用了该设置后，标签内部的元素也要设置inverted，否则就是白色底
+    attached 依附，消去圆角，与同级别的segment完美贴合
+    segment 白框
+-->
+
+<nav th:replace="_fragments :: menu(6)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container"> <!--让元素离边框稍远点-->
+        <!--stackable 可堆叠，适应手机屏-->
+        <div class="ui inverted secondary stackable menu"> <!--menu下的每个条目都要用item，使用secondary使得鼠标悬浮时的背景框变小一点-->
+            <h2 class="ui teal header item">后台管理</h2>
+            <a href="#" class="active m-item item m-mobile-hide"><i class="home icon"></i>博客</a>
+            <!--i标签 导入semantic中的图标-->
+            <a href="#" class="m-item item m-mobile-hide"><i class="idea icon"></i>分类</a>
+            <a href="#" class="m-item item m-mobile-hide"><i class="tags icon"></i>标签</a>
+            <div class="right m-item m-mobile-hide menu">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img src="https://picsum.photos/id/101/100/100" alt="" class="ui avatar image">
+                        Mark
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--只在手机端显示sidebar-->
+    <a href="#" class="ui black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<!--二级导航-->
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:href="@{/user/blogs/input}" class="item">发布</a>
+            <a href="#" th:href="@{/user/userBlog}" class="teal active item">列表</a>
+        </div>
+    </div>
+</div>
+
+<!--中间内容-->
+<div class="m-container m-padded-tb-big">
+    <div class="ui container">
+        <div class="ui secondary segment form" method="post">
+            <input type="hidden" name="page">
+
+            <div class="inline fields">
+                <div class="field">
+                    <input type="text" name="title" placeholder="标题">
+                </div>
+                <div class="field">
+                    <div class="ui labeled action input">
+                        <div class="ui type selection dropdown">
+                            <input type="hidden" name="typeId">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">分类</div>
+                            <div class="menu">
+                                <div th:each="type : ${types}" class="item" th:data-value="${type.id}" th:text="${type.name}">错误日志</div>
+                            </div>
+                        </div>
+                        <button id="clear-btn" class="ui clear compact button">清除条件</button>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="recommend" name="recommend">
+                        <label for="recommend">推荐</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <button type="button" id="search-btn" class="ui mini teal basic button"><i class="search icon"></i>搜索</button>
+                </div>
+            </div>
+        </div>
+        <div id="table-container">
+            <table th:fragment="blogList" class="ui compact teal table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>标题</th>
+                    <th>类型</th>
+                    <th>推荐</th>
+                    <th>状态</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="blog, iterStat : ${page.content}">
+                    <td th:text="${iterStat.count}">1</td>
+                    <td th:text="${blog.title}">刻意练习清单</td>
+                    <td th:text="${blog.type.name}">认知升级</td>
+                    <td th:text="${blog.recommend} ? '是' : '否'">是</td>
+                    <td th:text="${blog.published} ? '已发布' : '草稿'"></td>
+                    <td th:text="${blog.updateTime}">2021.4.4</td>
+                    <td>
+                        <a href="#" th:href="@{/user/blogs/{id}/input(id=${blog.id})}" class="ui mini teal button">编辑</a>
+                        <a href="#" th:href="@{/user/blogs/{id}/delete(id=${blog.id})}" class="ui mini red button">删除</a>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="7">
+                        <div class="ui mini floated pagination menu" th:if="${page.totalPages}>1">
+                            <a onclick="page(this)" th:attr="data-page=${page.number}-1" th:unless="${page.first}" class="item">上一页</a>
+                            <a onclick="page(this)" th:attr="data-page=${page.number}+1" th:unless="${page.last}" class="item">下一页</a>
+                        </div>
+                        <a href="#" th:href="@{/user/blogs/input}" class="ui right floated teal basic mini button">新增</a>
+                    </th>
+                </tr>
+                </tfoot>
+            </table>
+            <div class="ui success message" th:unless="${#strings.isEmpty(message)}">
+                <i class="close icon"></i>
+                <div class="header">提示：</div>
+                <p th:text="${message}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--底部栏-->
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive"> <!--vertical 和attached一样，消除圆角边框-->
+    <!--container 和导航栏左右居中保持一致
+        center aligned 文本居中
+    -->
+    <div class="ui center aligned container">
+        <div class="ui inverted divided stackable grid"> <!--将页面分割为16份栅格，divided 分割线-->
+            <div class="three wide column">
+                <div class="ui inverted link list">
+                    <!--rounded image 图片变为圆角
+                        style="width: 110px 设置图片像素，可调用来整图片大小
+                        把图片放入list下，并设为item，可以使图片位置相对其他link list更加对称，居中
+                    -->
+                    <a href="#" class="item">
+                        <img src="../../static/images/Trans.png" alt="" class="ui rounded image" style="width: 110px">
+                    </a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">最新博客</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list ">
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">联系我</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list">
+                    <a href="#" class="item">Email: psglgd8051@gmail.com</a>
+                </div>
+            </div>
+            <div class="seven wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">Mark</h4>
+                <p class="m-text-spaced m-text-thin m-opacity-mini">这是我个人的博客，会分享关于编程、写作以及思考相关的内容，希望可以给来这的人有所帮助</p>
+            </div>
+        </div>
+        <!--底部分割线-->
+        <div class="ui inverted section divider"></div>
+        <p class="m-text-spaced m-text-thin m-opacity-mini">Copyright @2020-2021 Designed by Mark</p>
+    </div>
+
+</footer>
+
+<!--/*/<th:block th:replace="_fragments :: script">/*/-->
+<!--引入jquery-->
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<!--/*/</th:block>/*/-->
+
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+
+    $('.ui.dropdown').dropdown({
+        on: 'hover'
+    });
+
+    function page(obj) {
+        // 首先获取name为page的隐含域，再通过val给page赋值
+        // 赋的值为obj中的data-page
+        $("[name='page']").val($(obj).data("page"));
+        loadData();
+    };
+
+    $("#search-btn").click(function () {
+        $("[name='page']").val(0);
+        loadData();
+    });
+
+    function loadData() {
+        $("#table-container").load(/*[[@{/admin/blogs/search}]]*/"/admin/blogs/search",{
+            title : $("[name='title']").val(),
+            typeId : $("[name='typeId']").val(),
+            recommend : $("[name='recommend']").prop('checked'),
+            page : $("[name='page']").val()
+        });
+    }
+
+    /*消息关闭初始化*/
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade');
+        });
+
+    // 清除搜索条件
+    $('#clear-btn') // clear对应button中的id="clear-btn"
+        .on('click', function () {
+            $('.ui.type.selection.dropdown') // 对应于<div class="ui type selection dropdown">
+                .dropdown('clear');
+        });
+
+</script>
+
+</body>
+</html>

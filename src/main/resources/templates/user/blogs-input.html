@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="user/_fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客发布</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="../../static/lib/editor/css/editormd.min.css">
+    <!--引入自定义的css-->
+    <link rel="stylesheet" href="../../static/css/me.css">
+
+</head>
+<body>
+
+<!--导航
+    ui 代表使用了ui
+    inverted 反转，白变黑，用了该设置后，标签内部的元素也要设置inverted，否则就是白色底
+    attached 依附，消去圆角，与同级别的segment完美贴合
+    segment 白框
+-->
+<nav th:replace="user/_fragments :: menu(1)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container"> <!--让元素离边框稍远点-->
+        <!--stackable 可堆叠，适应手机屏-->
+        <div class="ui inverted secondary stackable menu"> <!--menu下的每个条目都要用item，使用secondary使得鼠标悬浮时的背景框变小一点-->
+            <h2 class="ui teal header item">后台管理</h2>
+            <a href="#" class="active m-item item m-mobile-hide"><i class="home icon"></i>博客</a>
+            <!--i标签 导入semantic中的图标-->
+            <a href="#" class="m-item item m-mobile-hide"><i class="idea icon"></i>分类</a>
+            <a href="#" class="m-item item m-mobile-hide"><i class="tags icon"></i>标签</a>
+            <div class="right m-item m-mobile-hide menu">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img src="https://picsum.photos/id/101/100/100" alt="" class="ui avatar image">
+                        Mark
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--只在手机端显示sidebar-->
+    <a href="#" class="ui black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<!--二级导航-->
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:href="@{/user/blogs/input}" class="teal active item">发布</a>
+            <a href="#" th:href="@{/user/blogs}" class="item">列表</a>
+        </div>
+    </div>
+</div>
+
+<!--中间内容-->
+<div class="m-container m-padded-tb-big">
+    <div class="ui container">
+        <form id="blog-form" th:action="@{/user/blogs}" th:object="${blog}" class="ui form" method="post"
+              enctype="multipart/form-data">
+            <input type="hidden" name="published">
+            <input type="hidden" name="id" th:value="*{id}">
+            <div class="required field">
+                <div class="ui left labeled input">
+                    <div class="ui teal basic selection compact dropdown label">
+                        <input type="hidden" name="flag" th:value="*{flag}!=null ? *{flag}">
+                        <i class="dropdown icon"></i>
+                        <div class="text">原创</div>
+                        <div class="menu">
+                            <div class="item" data-value="原创">原创</div>
+                            <div class="item" data-value="转载">转载</div>
+                            <div class="item" data-value="翻译">翻译</div>
+                        </div>
+                    </div>
+                    <input type="text" name="title" th:value="*{title}" placeholder="标题">
+                </div>
+            </div>
+            <div class="required field">
+                <div id="md-content" style="z-index: 1 !important;">
+                    <textarea placeholder="博客内容" name="content" th:text="*{content}" style="display: none"></textarea>
+                </div>
+            </div>
+            <div class="two fields">
+                <div class="required field">
+                    <div class="ui left labeled input" style="margin-top: 13px">
+                        <label class="ui compact teal basic label">分类</label>
+                        <div class="ui fluid selection dropdown">
+                            <input type="hidden" name="type.id" th:value="*{type}!=null ? *{type.id}">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">分类</div>
+                            <div class="menu">
+                                <div th:each="type : ${types}" class="item" th:data-value="${type.id}"
+                                     th:text="${type.name}">错误日志
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui left labeled input" style="margin-top: 28px">
+                        <label class="ui compact teal basic label">标签</label>
+                        <div class="ui tag fluid multiple search selection dropdown">
+                            <input type="hidden" name="tagIds" th:value="*{tagIds}">
+                            <i class="dropdown icon"></i>
+                            <div class="default text">标签</div>
+                            <div class="menu">
+                                <div th:each="tag : ${tags}" class="item" th:data-value="${tag.id}"
+                                     th:text="${tag.name}">java
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left labeled input m-rel-div">
+                        <img th:src="${blog.firstPicture}!=null ? ${blog.firstPicture} : @{/images/avatar.png}"
+                             width="250" height="130" id="imgs" class="border border-primary"
+                             style="
+                               margin-left: 75px;
+                               height: 130px">
+                        <input type="file" name="imgFile" id="pic" hidden="hidden" accept="image/*"
+                               th:onchange="showImg('pic')">
+                        <div style="text-align: center">
+                            <input type="button" th:onclick="chooseImageFile('pic')" style="align-content: center;"
+                                   class="m-rel-pos" value="选择图片">
+                        </div>
+
+                        <!--margin: 0px 158px 90px 15px;"-->
+                        <!--<label class="ui teal basic label">首图</label>-->
+                        <!--<input type="text" name="firstPicture" th:value="*{firstPicture}" placeholder="首图引用地址">-->
+                    </div>
+                </div>
+            </div>
+            <div class="required field">
+                <textarea name="description" th:text="*{description}" placeholder="请输入博客描述..."
+                          maxlength="200"></textarea>
+            </div>
+            <div class="inline fields">
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="recommend" name="recommend" th:checked="*{recommend}" class="hidden">
+                        <label for="recommend">推荐</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="shareStatement" name="shareStatement" th:checked="*{shareStatement}"
+                               class="hidden">
+                        <label for="shareStatement">转载声明</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="appreciation" name="appreciation" th:checked="*{appreciation}"
+                               class="hidden">
+                        <label for="appreciation">赞赏</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="commentabled" name="commentabled" th:checked="*{commentabled}"
+                               class="hidden">
+                        <label for="commentabled">评论</label>
+                    </div>
+                </div>
+            </div>
+            <div class="ui error message"></div>
+            <div class="ui right aligned container">
+                <button type="button" class="ui button"><a th:href="@{/user/goback}">返回</a></button>
+                <button type="button" id="save-btn" class="ui secondary button">保存</button>
+                <button type="button" id="publish-btn" class="ui secondary button">发布</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--底部栏-->
+<footer th:replace="user/_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive">
+    <!--vertical 和attached一样，消除圆角边框-->
+    <!--container 和导航栏左右居中保持一致
+        center aligned 文本居中
+    -->
+    <div class="ui center aligned container">
+        <div class="ui inverted divided stackable grid"> <!--将页面分割为16份栅格，divided 分割线-->
+            <div class="three wide column">
+                <div class="ui inverted link list">
+                    <!--rounded image 图片变为圆角
+                        style="width: 110px 设置图片像素，可调用来整图片大小
+                        把图片放入list下，并设为item，可以使图片位置相对其他link list更加对称，居中
+                    -->
+                    <a href="#" class="item">
+                        <img src="../../static/images/Trans.png" alt="" class="ui rounded image" style="width: 110px">
+                    </a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">最新博客</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list ">
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">联系我</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list">
+                    <a href="#" class="item">Email: psglgd8051@gmail.com</a>
+                </div>
+            </div>
+            <div class="seven wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">Mark</h4>
+                <p class="m-text-spaced m-text-thin m-opacity-mini">这是我个人的博客，会分享关于编程、写作以及思考相关的内容，希望可以给来这的人有所帮助</p>
+            </div>
+        </div>
+        <!--底部分割线-->
+        <div class="ui inverted section divider"></div>
+        <p class="m-text-spaced m-text-thin m-opacity-mini">Copyright @2020-2021 Designed by Mark</p>
+    </div>
+
+</footer>
+
+<!--/*/<th:block th:replace="user/_fragments :: script">/*/-->
+<!--引入jquery-->
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<!--/*/</th:block>/*/-->
+
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+
+    $('.ui.dropdown').dropdown({
+        on: 'hover'
+    });
+
+    // 标签可自定义
+    $('.ui.tag.dropdown').dropdown({
+        allowAdditions: true
+    });
+
+    // 非空校验
+    $('.ui.form').form({
+        fields: {
+            title: {
+                identifier: 'title',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入博客标题！'
+                }]
+            },
+            content: {
+                identifier: 'content',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入博客内容！'
+                }]
+            },
+            typeId: {
+                identifier: 'typeId',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入博客类型！'
+                }]
+            },
+            firstPicture: {
+                identifier: 'firstPicture',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入首图！'
+                }]
+            },
+            description: {
+                identifier: 'description',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入博客描述！'
+                }]
+            }
+        }
+    });
+
+    // markdown初始化
+    var contentEditor;
+    $(function () {
+        contentEditor = editormd("md-content", {
+            width: "100%",
+            height: 640,
+            syncScrolling: "single",
+            path: "/lib/editor/lib/"
+            // path    : "../static/lib/editor/lib/"
+        });
+    });
+
+    $('#save-btn').click(function () {
+        $('[name="published"]').val(false); // 修改published为false
+        $('#blog-form').submit(); // 提交form表单
+    });
+
+    $('#publish-btn').click(function () {
+        $('[name="published"]').val(true); // 修改published为false
+        $('#blog-form').submit(); // 提交form表单
+    });
+
+    // 打开file表单,选择图片
+    function chooseImageFile(inputFileId) {
+        $("#" + inputFileId).click();
+    };
+
+    // FileReader接口提供了一个异步的API，通过这个API可以从浏览器中异步访问文件系统中的数据。
+    // 因此，FileReader接口可以读取文件中的数据，并将读取的数据放入到内存中去
+    var imgReader = new FileReader();
+
+    // 正则表达式，过滤图片文件
+    regexImageFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
+
+    function showImg(inputFileId) {
+        // 获取图片
+        var imgFile = $("#" + inputFileId).get(0).files[0];
+        // 判断上传文件是否为图片
+        if (!regexImageFilter.test(imgFile.type)) {
+            console.log("请输入正确图片格式！");
+        } else {
+            imgReader.readAsDataURL(imgFile);
+        }
+    };
+
+    // 读取图片
+    imgReader.onload = function (evt) {
+        $("#imgs").attr("src", evt.target.result);
+    };
+
+</script>
+
+</body>
+</html>

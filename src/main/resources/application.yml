@@ -1,0 +1,9 @@
+spring:
+  thymeleaf:
+    mode: HTML
+  profiles:
+    active: dev
+
+
+# 定义默认头像
+comment.avatar: /images/avatar.jpg

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增分类</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="../../static/lib/editor/css/editormd.min.css">
+    <!--引入自定义的css-->
+    <link rel="stylesheet" href="../../static/css/me.css">
+
+</head>
+<body>
+
+<!--导航
+    ui 代表使用了ui
+    inverted 反转，白变黑，用了该设置后，标签内部的元素也要设置inverted，否则就是白色底
+    attached 依附，消去圆角，与同级别的segment完美贴合
+    segment 白框
+-->
+<nav th:replace="admin/_fragments :: menu(2)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+    <div class="ui container"> <!--让元素离边框稍远点-->
+        <!--stackable 可堆叠，适应手机屏-->
+        <div class="ui inverted secondary stackable menu"> <!--menu下的每个条目都要用item，使用secondary使得鼠标悬浮时的背景框变小一点-->
+            <h2 class="ui teal header item">后台管理</h2>
+            <a href="#" class="active m-item item m-mobile-hide"><i class="home icon"></i>博客</a>
+            <!--i标签 导入semantic中的图标-->
+            <a href="#" class="m-item item m-mobile-hide"><i class="idea icon"></i>分类</a>
+            <a href="#" class="m-item item m-mobile-hide"><i class="tags icon"></i>标签</a>
+            <div class="right m-item m-mobile-hide menu">
+                <div class="ui dropdown item">
+                    <div class="text">
+                        <img src="https://picsum.photos/id/101/100/100" alt="" class="ui avatar image">
+                        Mark
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="#" class="item">注销</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--只在手机端显示sidebar-->
+    <a href="#" class="ui black icon button m-right-top m-mobile-show">
+        <i class="sidebar icon"></i>
+    </a>
+</nav>
+<!--二级导航-->
+<div class="ui attached pointing menu">
+    <div class="ui container">
+        <div class="right menu">
+            <a href="#" th:href="@{/admin/tags/input}" class="teal active item">新增</a>
+            <a href="#" th:href="@{/admin/tags}" class="item">列表</a>
+        </div>
+    </div>
+</div>
+
+<!--中间内容-->
+<div class="m-container m-padded-tb-big">
+    <div class="ui container">
+        <form th:action="*{id}==null ? @{/admin/tags} : @{/admin/tags/{id}(id=*{id})}" class="ui form" th:object="${tag}" method="post">
+            <input type="hidden" name="id" th:value="*{id}">
+            <div class="field">
+                <div class="ui left labeled input">
+                    <label class="ui teal basic label">名称</label>
+                    <!--输入的name值赋给type中的name属性-->
+                    <input type="text" name="name" th:value="*{name}" placeholder="分类名称">
+                </div>
+            </div>
+
+
+            <div class="ui error message"></div>
+            <!--/*/
+            <div class="ui negative message" th:if="${#fields.hasErrors('name')}">
+            <i class="close icon"></i>
+            <div class="header">验证失败!</div>
+            <p th:errors="*{name}"></p>
+            </div>
+            /*/-->
+
+            <div class="ui right aligned container">
+                <button class="ui button" type="button" onclick="window.history.go(-1)">返回</button>
+                <button class="ui secondary submit button">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<!--底部栏-->
+<footer th:replace="admin/_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive">
+    <!--vertical 和attached一样，消除圆角边框-->
+    <!--container 和导航栏左右居中保持一致
+        center aligned 文本居中
+    -->
+    <div class="ui center aligned container">
+        <div class="ui inverted divided stackable grid"> <!--将页面分割为16份栅格，divided 分割线-->
+            <div class="three wide column">
+                <div class="ui inverted link list">
+                    <!--rounded image 图片变为圆角
+                        style="width: 110px 设置图片像素，可调用来整图片大小
+                        把图片放入list下，并设为item，可以使图片位置相对其他link list更加对称，居中
+                    -->
+                    <a href="#" class="item">
+                        <img src="../../static/images/Trans.png" alt="" class="ui rounded image" style="width: 110px">
+                    </a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">最新博客</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list ">
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                    <a href="#" class="item">用户故事 (User Story)</a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">联系我</h4>
+                <!--竖着的列表-->
+                <div class="ui inverted link list">
+                    <a href="#" class="item">Email: psglgd8051@gmail.com</a>
+                </div>
+            </div>
+            <div class="seven wide column">
+                <h4 class="ui inverted header m-text-spaced m-text-thin">Mark</h4>
+                <p class="m-text-spaced m-text-thin m-opacity-mini">这是我个人的博客，会分享关于编程、写作以及思考相关的内容，希望可以给来这的人有所帮助</p>
+            </div>
+        </div>
+        <!--底部分割线-->
+        <div class="ui inverted section divider"></div>
+        <p class="m-text-spaced m-text-thin m-opacity-mini">Copyright @2020-2021 Designed by Mark</p>
+    </div>
+
+</footer>
+
+<!--/*/<th:block th:replace="admin/_fragments :: script">/*/-->
+<!--引入jquery-->
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<!--/*/</th:block>/*/-->
+
+<script>
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+
+    $('.ui.dropdown').dropdown({
+        on: 'hover'
+    });
+
+    /*分类名称不为空校验*/
+    /*2021.6.22  现已取消该内容*/
+    // $('.ui.form').form({
+    //     fields: {
+    //         title: {
+    //             identifier: 'name1',
+    //             rules: [{
+    //                 type: 'empty',
+    //                 prompt: '请输入分类名称'
+    //             }]
+    //         }
+    //     }
+    // });
+
+    // 关闭消息
+    $('.message .close')
+        .on('click', function() {
+            $(this)
+            .closest('.message')
+            .transition('fade');
+        });
+
+</script>
+
+</body>
+</html>
