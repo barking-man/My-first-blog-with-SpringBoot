@@ -1,6 +1,7 @@
 # 2021.7.20
 问题：
 - 使用semantic-ui中的popup组件时，未能理解callback如何调用
+- 用户注册
 
 补充：
 - 使用document设置具体元素的style属性
