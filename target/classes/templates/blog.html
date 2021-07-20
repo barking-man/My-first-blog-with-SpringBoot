@@ -269,6 +269,7 @@
         <a href="#comment-container" class="ui teal button">留言</a>
         <button class="ui wechat icon button"><i class="wechat icon"></i></button>
         <div id="toTop-button" class="ui icon button"><i class="chevron up icon"></i></div>
+
     </div>
 </div>
 
@@ -278,6 +279,7 @@
     </ol>
 
 </div>
+
 
 <div id="qrcode" class="ui wechat-qr flowing popup transition hidden" style="width: 130px !important;">
     <img th:src="@{/images/QRcode.png}" alt="" class="ui rounded image" style="width: 120px !important;">
@@ -389,6 +391,7 @@
         on: 'hover',
         position: 'left center'
     });
+
 
     // 生成二维码所需要指定的前缀地址
     var serurl = "/*[[#{blog.serurl}]]*/";

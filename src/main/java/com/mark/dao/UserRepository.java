@@ -17,4 +17,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     // 根据昵称查询
     User findByNickname(String nickname);
+
+    // 根据用户名查询用户
+    User findByUsername(String username);
 }

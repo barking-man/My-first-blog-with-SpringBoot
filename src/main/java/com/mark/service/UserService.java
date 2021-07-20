@@ -16,4 +16,7 @@ public interface UserService {
 
     // 根据昵称查询用户
     User getUserByNickname(String nickname);
+
+    // 根据用户名查询用户
+    User getUserByUsername(String username);
 }

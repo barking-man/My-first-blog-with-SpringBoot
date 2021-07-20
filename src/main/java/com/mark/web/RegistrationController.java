@@ -75,22 +75,34 @@ public class RegistrationController {
         System.out.println("==================>");
         System.out.println("came to username check");
         // 验证用户名或密码是否输入正确
-        if (!user.getUsername().matches(usernameReg) || !user.getPassword().matches(pwdReg)) {
-            if (!user.getUsername().matches(usernameReg)) {
-                System.out.println(user.getUsername());
-                System.out.println("用户名错误");
-            }
-            if (!user.getPassword().matches(pwdReg)) {
-                System.out.println("密码错误");
-                System.out.println(user.getPassword());
-            }
+        if (!user.getUsername().matches(usernameReg) && !user.getPassword().matches(pwdReg)) {
             msg = "errorInput";
             return msg;
         }
+        if (!user.getUsername().matches(usernameReg)) {
+            msg = "usernameError";
+            return msg;
+        }
+        if (!user.getPassword().matches(pwdReg)) {
+            msg = "passwordError";
+            return msg;
+        }
 
-        System.out.println("==================>");
-        System.out.println("came to registration!");
-        System.out.println(user.getNickname());
+        // 验证用户名及昵称是否存在
+        User ret_user1 = userService.getUserByNickname(user.getNickname());
+        User ret_user2 = userService.getUserByUsername(user.getUsername());
+        if (ret_user1 != null && ret_user2 != null) {
+            msg = "dupNicknameUsername";
+            return msg;
+        }
+        if (ret_user1 != null) {
+            msg = "dupNickname";
+            return msg;
+        }
+        if (ret_user2 != null) {
+            msg = "dupUsername";
+            return msg;
+        }
 
         String pwd = user.getPassword();
         user.setPassword(MD5Utils.code(pwd));
@@ -99,13 +111,6 @@ public class RegistrationController {
         System.out.println("registration is end !");
 
         return msg;
-    }
-
-    @PostMapping("/test")
-    @ResponseBody
-    public String test(String testData) {
-        System.out.println(testData);
-        return testData;
     }
 
 }

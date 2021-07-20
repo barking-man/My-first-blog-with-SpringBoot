@@ -49,9 +49,13 @@ public class LoginController {
     public String login(@RequestParam String username,
                         @RequestParam String password,
                         HttpSession session,
-                        RedirectAttributes attributes,
                         Model model,
                         @PageableDefault(size = 5, sort = ("updateTime"), direction = Sort.Direction.DESC) Pageable pageable) {
+        if (username.equals("") || password.equals("")) {
+            String msg = "用户名或密码不能为空！";
+            model.addAttribute("msg", msg);
+            return "login";
+        }
         User user = userService.checkUser(username, password);
         if (user != null) {
             user.setPassword(null);
@@ -62,8 +66,9 @@ public class LoginController {
             model.addAttribute("recommendBlogs", blogService.listRecommendBlogTop(8));
             return "index";
         } else {
-            attributes.addFlashAttribute("message", "用户名或密码错误");
-            return "redirect:/admin";
+            String msg = "用户名或密码错误！";
+            model.addAttribute("msg",msg);
+            return "login";
         }
     }
 

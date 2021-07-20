@@ -35,13 +35,21 @@
                        th:onchange="showImg('pic')">
             </div>
             <span th:onclick="chooseImageFile('pic')">点击图片以上传你的头像</span>
-            <input type="text" id="nickname" name="nickname" th:onclick="test()" placeholder="昵称"/>
+            <input type="text" id="nickname" name="nickname" placeholder="昵称"/>
             <input type="text" id="username" name="username" placeholder="用户名 (6至20位字母，数字，下划线)"/>
             <input type="password" id="password" name="password" placeholder="密码 (6至18位字母，数字)"/>
             <input type="email" id="email" name="email" placeholder="请输入邮箱"/>
             <input type="hidden" id="type" name="type" th:value="2">
-            <a class="ui button" id="regButton">注册</a>
-            <text id="errorMsg" style="color: red"></text>
+            <a class="ui inverted red button" id="regButton">注册</a>
+            <div class="ui negative message" id="errorDiv" style="
+                 padding-top: 8px !important;
+                 padding-bottom: 8px !important;
+                 display: none">
+                <p id="errorMsg" style="
+                font-size: medium;font-family: sans-serif;font-weight: 500 !important;">
+                    That offer has expired
+                </p>
+            </div>
         </form>
     </div>
     <div class="form-container sign-in-container">
@@ -52,11 +60,20 @@
                 <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
                 <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
             </div>
-            <span>or use your account</span>
+<!--            <span class="account" data-content="###############">or use your account</span>-->
             <input type="text" name="username" placeholder="用户名"/>
             <input type="password" name="password" placeholder="密码"/>
-            <a href="#">Forgot your password?</a>
+<!--            <a href="#" class="forget">Forgot your password?</a>-->
             <button type="submit">登录</button>
+            <div class="ui negative message" th:if="${msg} != null"style="
+                 padding-top: 8px !important;
+                 padding-bottom: 8px !important;">
+                <p th:text="${msg}" style="
+                font-size: medium;font-family: sans-serif;font-weight: 500 !important;">
+                    That offer has expired
+                </p>
+            </div>
+
         </form>
     </div>
     <div class="overlay-container">
@@ -76,12 +93,13 @@
 </div>
 
 
+
 <!--/*/<th:block th:replace="_fragments :: script">/*/-->
 <!--引入jquery-->
 <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-
 <!--/*/</th:block>/*/-->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js"
         integrity="sha256-qM7QTJSlvtPSxVRjVWNM2OfTAz/3k5ovHOKmKXuYMO4=" crossorigin="anonymous"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery.form/4.0.1/jquery.form.js"></script>
@@ -90,6 +108,13 @@
 <script th:src="@{/js/login.js}"></script>
 
 <script>
+
+
+
+
+    /*----------------------*/
+
+
     // 打开file表单,选择图片
     function chooseImageFile(inputFileId) {
         $("#" + inputFileId).click();
@@ -135,7 +160,6 @@
     };
 
 
-
     $("#regButton").click(function () {
         var nickname = $("#nickname").val();
         var username = $("#username").val();
@@ -152,114 +176,30 @@
                 "email": email,
                 "type": type
             },
-            success: function () {
-
+            success: function (data) {
+                console.log("came to success");
+                if (data == "ok") {
+                    $("#signIn").click();
+                    document.getElementById("errorDiv").style.display="none";
+                } else {
+                    document.getElementById("errorDiv").style.display="block";
+                    if (data == "errorInput") {
+                        $("#errorMsg").html("用户名与密码不合法！")
+                    } else if (data == "usernameError") {
+                        $("#errorMsg").html("用户名不合法！")
+                    } else if (data == "passwordError") {
+                        $("#errorMsg").html("密码不合法！")
+                    } else if (data == "dupNicknameUsername") {
+                        $("#errorMsg").html("昵称、用户名已存在！")
+                    } else if (data == "dupNickname") {
+                        $("#errorMsg").html("昵称已存在！")
+                    } else if (data == "dupUsername") {
+                        $("#errorMsg").html("用户名已存在！")
+                    }
+                }
             }
         })
     });
-
-    // $("#regButton").click(function () {
-    //     var nickname = $("#nickname").val(),
-    //         username = $("#username").val(),
-    //         password = $("#password").val(),
-    //         email = $("#email").val(),
-    //         type = $("#type").val();
-    //
-    //     $.ajax({
-    //         url: 'registration',
-    //         type: 'post', // 提交方式
-    //         data: {
-    //             'nickname': nickname,
-    //             'username': username,
-    //             'password': password,
-    //             'email': email,
-    //             'type': type
-    //         },
-    //         success: function () {
-    //             if (data.trim() == "ok") {
-    //                 $("#signIn").click();
-    //             } else if (data.trim() == "error") {
-    //                 // $("#errorMsg").setAttribute()
-    //                 $("#errorMsg").html("用户名或密码格式错误");
-    //
-    //             }
-    //             console.log("came to success");
-    //             $("#signIn").click();
-    //         }
-    //     });
-    // });
-
-
-    function test() {
-        var testData = "Mark";
-        $.ajax({
-            url: "test",
-            type: 'post',
-            data: {
-                'testData': testData
-            },
-            success: function (data) {
-                console.log(data);
-            }
-        })
-    }
-
-    // $("#regButton").click(function dataSubmit() {
-    //     $('#formReg').on('submit', function () {
-    //         var imgFile = new FormData($("#formReg")[0]);
-    //         imgFile.append('imgFile', $("#pic")[0].files[0]);
-    //         var nickname = $("#nickname").val(),
-    //             username = $("#username").val(),
-    //             password = $("#password").val(),
-    //             type = $("#type").val(),
-    //             email = $("#email").val();
-    //
-    //         console.log(nickname);
-    //         console.log(username);
-    //
-    //         $.ajax({
-    //             url: 'upLoadImg',
-    //             type: 'post',
-    //             data: imgFile,
-    //             // 告诉jQeury不处理发送的数据
-    //             processData: false,
-    //             // 不设置Content-Type的请求头
-    //             contentType: false,
-    //             async: false,
-    //             cache: false,
-    //             success: function () {
-    //                 $(this).ajaxSubmit({
-    //                     type: 'post', // 提交方式
-    //                     url: 'registration',
-    //                     data: {
-    //                         'nickname': nickname,
-    //                         'username': username,
-    //                         'password': password,
-    //                         'email': email,
-    //                         'type': type
-    //                     },
-    //                     processData: true,
-    //                     contentType: true,
-    //                     async: true,
-    //                     cache: true,
-    //                     success: function (data) {
-    //                         if (data.trim() == "ok") {
-    //                             $("#signIn").click();
-    //                         } else {
-    //                             // $("#errorMsg").setAttribute()
-    //                             $("#errorMsg").html("用户名或密码格式错误");
-    //
-    //                         }
-    //                     }
-    //                 });
-    //             }
-    //         });
-    //
-    //
-    //         return false;
-    //     });
-    // });
-
 
 </script>
 </body>
