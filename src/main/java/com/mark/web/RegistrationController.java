@@ -47,7 +47,10 @@ public class RegistrationController {
 //        return "login";
 //    }
 
-    // ajax上传图片
+    /**
+     * 处理ajax上传过来图片
+     * 因为通过ajax提交图片时，图片数据格式需要特殊设置，注册时为了不与用户其他信息冲突，故提前保存到全局变量
+     */
     @PostMapping("/upLoadImg")
     @ResponseBody
     public void upLoadImg(MultipartFile imgFile) throws IOException {

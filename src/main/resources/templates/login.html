@@ -109,12 +109,6 @@
 
 <script>
 
-
-
-
-    /*----------------------*/
-
-
     // 打开file表单,选择图片
     function chooseImageFile(inputFileId) {
         $("#" + inputFileId).click();
@@ -136,6 +130,7 @@
         } else {
             imgReader.readAsDataURL(imgFile);
         }
+        // 获取到图片后提交到后台保存
         var imgFile0 = new FormData($("#formReg")[0]);
         imgFile0.append('imgFile', $("#pic")[0].files[0]);
         $.ajax({
@@ -159,12 +154,13 @@
         $("#imgs").attr("src", evt.target.result);
     };
 
-
+    // 异步验证注册信息
     $("#regButton").click(function () {
         var nickname = $("#nickname").val();
         var username = $("#username").val();
         var password = $("#password").val();
         var email = $("#email").val();
+        // type = 2 默认注册用户都是普通用户，管理员 type = 1
         var type = $("#type").val();
 
         $.post({
@@ -177,11 +173,12 @@
                 "type": type
             },
             success: function (data) {
-                console.log("came to success");
                 if (data == "ok") {
+                    // 成功后返回登陆界面，并关闭错误警告
                     $("#signIn").click();
                     document.getElementById("errorDiv").style.display="none";
                 } else {
+                    // 显示错误警告
                     document.getElementById("errorDiv").style.display="block";
                     if (data == "errorInput") {
                         $("#errorMsg").html("用户名与密码不合法！")
