@@ -28,24 +28,7 @@ public class RegistrationController {
     private UserService userService;
 
     String baseimg = "";
-
-
-//    @PostMapping("/regis")
-//    public String registration(User user,
-//                               @RequestParam("imgFile")MultipartFile imgFile) throws IOException {
-//        String baseimg = "";
-//        // 保存头像
-//        if (imgFile != null) {
-//            BASE64Encoder base64Encoder = new BASE64Encoder();
-//            // 保存图片字符流到数据库
-//            baseimg = "data:" + imgFile.getContentType() + ";base64," + base64Encoder.encode(imgFile.getBytes());
-//        }
-//        user.setAvatar(baseimg);
-//        String pwd = user.getPassword();
-//        user.setPassword(MD5Utils.code(pwd));
-//        userService.saveUser(user);
-//        return "login";
-//    }
+    
 
     /**
      * 处理ajax上传过来图片
